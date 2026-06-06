@@ -43,9 +43,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     const flushList = (keyPrefix: string) => {
       if (listItems.length === 0) return null;
       const ul = (
-        <ul key={`${keyPrefix}-ul`} style={{ margin: '0 0 16px', paddingLeft: 24 }}>
+        <ul key={`${keyPrefix}-ul`} style={{ margin: '0 0 18px', paddingLeft: 26 }}>
           {listItems.map((item, i) => (
-            <li key={i} style={{ marginBottom: 6, color: 'var(--ink-secondary)' }}>{item}</li>
+            <li key={i} style={{ marginBottom: 8, color: 'var(--ink-secondary)', lineHeight: 1.7 }}>{item}</li>
           ))}
         </ul>
       );
@@ -59,16 +59,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         elements.push(flushList(`h2-${i}`));
         elements.push(
           <h2 key={i} style={{
-            fontSize: 22, fontWeight: 800, color: 'var(--ink-primary)',
-            margin: '36px 0 12px', letterSpacing: '-0.02em', lineHeight: 1.3,
+            fontSize: 28, fontWeight: 800, color: 'var(--ink-primary)',
+            margin: '48px 0 16px', letterSpacing: '-.025em', lineHeight: 1.25,
           }}>{line.slice(2)}</h2>
         );
       } else if (line.startsWith('## ')) {
         elements.push(flushList(`h3-${i}`));
         elements.push(
           <h3 key={i} style={{
-            fontSize: 18, fontWeight: 800, color: 'var(--ink-primary)',
-            margin: '28px 0 10px', letterSpacing: '-0.01em', lineHeight: 1.4,
+            fontSize: 20, fontWeight: 750, color: 'var(--ink-primary)',
+            margin: '36px 0 12px', letterSpacing: '-.015em', lineHeight: 1.35,
           }}>{line.slice(3)}</h3>
         );
       } else if (line.startsWith('- ')) {
@@ -80,7 +80,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       } else {
         elements.push(flushList(`p-${i}`));
         elements.push(
-          <p key={i} style={{ margin: '0 0 16px', color: 'var(--ink-secondary)', lineHeight: 1.8 }}>
+          <p key={i} style={{ margin: '0 0 18px', color: 'var(--ink-secondary)', lineHeight: 1.8, fontSize: 17 }}>
             {line}
           </p>
         );
@@ -91,90 +91,83 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <div style={{ background: 'var(--bg-page)', color: 'var(--ink-primary)', minHeight: '100vh', fontFamily: "var(--font-brand)" }}>
+    <div style={{ background: 'var(--page-bg)', color: 'var(--ink-primary)', minHeight: '100vh', fontFamily: 'var(--font)' }}>
       {/* Navigation */}
-      <nav className="site-nav">
-        <div className="site-nav-inner">
-          <Link href="/" style={{ color: 'var(--ink-primary)', fontWeight: 800, fontSize: 15, letterSpacing: '-0.02em', textDecoration: 'none' }}>
+      <nav className="nav">
+        <div className="nav-inner">
+          <Link href="/" style={{ color: 'var(--ink-primary)', fontWeight: 800, fontSize: 15, letterSpacing: '-.02em', textDecoration: 'none' }}>
             BlogForge
           </Link>
-          <div className="site-nav-links">
-            <Link href="/articles">Articles</Link>
-            <Link href="/">Home</Link>
+          <div className="nav-links">
+            <Link href="/articles" className="nav-link">Articles</Link>
+            <Link href="/" className="nav-link">Home</Link>
           </div>
         </div>
       </nav>
 
-      {/* Featured Image */}
+      {/* Featured Image Hero */}
       {article.featuredImage && (
-        <div className="article-hero animate-fade-in-up">
-          <Image src={article.featuredImage} alt={article.title} fill style={{ objectFit: 'cover' }} priority />
+        <div className="article-hero animate-in">
+          <Image src={article.featuredImage} alt={article.title} fill priority style={{ objectFit: 'cover' }} />
+          <div className="article-hero-fade" />
         </div>
       )}
 
       {/* Article Header */}
-      <header style={{ maxWidth: 720, margin: '0 auto', padding: '40px 20px 0' }} className="animate-fade-in-up">
-        <h1 style={{
-          fontSize: 32, fontWeight: 900, letterSpacing: '-0.02em', lineHeight: 1.2,
-          margin: '0 0 16px', color: 'var(--ink-primary)',
-        }}>
-          {article.title}
-        </h1>
-
-        {article.excerpt && (
-          <p style={{
-            fontSize: 17, color: 'var(--ink-tertiary)', lineHeight: 1.6,
-            margin: '0 0 24px', fontWeight: 400,
-          }}>
-            {article.excerpt}
-          </p>
-        )}
-
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
-          paddingBottom: 20, borderBottom: '1px solid var(--border-subtle)',
-        }}>
+      <header className="article-header animate-in-d1">
+        <div>
           {article.category && (
-            <span style={{
-              fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em',
-              color: '#949cf7', background: 'rgba(99,102,241,0.15)',
-              padding: '3px 10px', borderRadius: 6,
-            }}>
-              {article.category}
-            </span>
+            <span className="article-category">{article.category}</span>
           )}
+          <h1 style={{
+            fontSize: 40, fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.15,
+            margin: '0 0 20px', color: 'var(--ink-primary)',
+          }}>
+            {article.title}
+          </h1>
+          {article.excerpt && (
+            <p style={{
+              fontSize: 18, color: 'var(--ink-secondary)', lineHeight: 1.6,
+              margin: '0 0 24px', fontWeight: 400,
+            }}>
+              {article.excerpt}
+            </p>
+          )}
+        </div>
+        <div className="article-meta">
           {article.readingTime && (
-            <span style={{ fontSize: 12, color: 'var(--ink-muted)', fontWeight: 500 }}>
-              {article.readingTime} min read
-            </span>
+            <span>{article.readingTime} min read</span>
+          )}
+          {article.readingTime && article.publishedAt && (
+            <span className="article-meta-divider" />
           )}
           {article.publishedAt && (
-            <span style={{ fontSize: 12, color: 'var(--ink-muted)', fontWeight: 500 }}>
-              {new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            <span>
+              {new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             </span>
           )}
         </div>
       </header>
 
       {/* Article Body */}
-      <article className="article-body">
+      <article className="content article-body animate-in-d2">
         {renderContent()}
       </article>
 
       {/* Pagination */}
       {(prev || next) && (
         <nav style={{
-          maxWidth: 720, margin: '0 auto', padding: '0 20px 80px',
-          display: 'flex', gap: 16, justifyContent: 'space-between',
-        }}>
+          maxWidth: 'var(--article-max)', margin: '0 auto', padding: '0 24px 100px',
+          display: 'flex', gap: 16,
+        }} className="animate-in-d3">
           {prev ? (
             <Link href={`/articles/${prev.slug}`} className="btn btn-ghost" style={{ flex: 1 }}>
-              ← {prev.title.slice(0, 40)}{prev.title.length > 40 ? '…' : ''}
+              ← {prev.title.slice(0, 45)}{prev.title.length > 45 ? '…' : ''}
             </Link>
           ) : <div style={{ flex: 1 }} />}
           {next ? (
-            <Link href={`/articles/${next.slug}`} className="btn btn-ghost" style={{ flex: 1, textAlign: 'right', justifyContent: 'flex-end' }}>
-              {next.title.slice(0, 40)}{next.title.length > 40 ? '…' : ''} →
+            <Link href={`/articles/${next.slug}`} className="btn btn-ghost" style={{ flex: 1, justifyContent: 'flex-end' }}>
+              {next.title.slice(0, 45)}{next.title.length > 45 ? '…' : ''} →
             </Link>
           ) : <div style={{ flex: 1 }} />}
         </nav>

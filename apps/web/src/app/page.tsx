@@ -22,82 +22,80 @@ export default function HomePage() {
   const articles = getPublishedArticles();
 
   return (
-    <div style={{ background: 'var(--bg-page)', color: 'var(--ink-primary)', minHeight: '100vh', fontFamily: "var(--font-brand)" }}>
+    <div>
       {/* Navigation */}
-      <nav className="site-nav">
-        <div className="site-nav-inner">
-          <Link href="/" className="site-nav-brand" style={{ color: 'var(--ink-primary)' }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 10,
-              background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontWeight: 900, fontSize: 12, flexShrink: 0,
-            }}>BF</div>
+      <nav className="nav">
+        <div className="nav-inner">
+          <Link href="/" className="nav-brand">
+            <div className="nav-brand-mark">BF</div>
             <span>BlogForge</span>
           </Link>
-          <div className="site-nav-links">
-            <Link href="/articles">Articles</Link>
-            <Link href="/admin/login" style={{ color: 'var(--accent)' }}>Admin</Link>
+          <div className="nav-links">
+            <Link href="/articles" className="nav-link">Articles</Link>
+            <Link href="/admin/login" className="nav-link">Admin</Link>
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="home-hero animate-fade-in-up">
-        <h1 className="home-hero-title">Autonomous AI Blog</h1>
-        <p className="home-hero-sub">
-          Content that writes, ranks, and scales itself. Powered by BlogForge multi-agent pipeline.
+      <section className="hero">
+        <div className="hero-badge">✨ Autonomous AI Content Engine</div>
+        <h1 className="hero-title">Content that writes, ranks, and scales itself.</h1>
+        <p className="hero-subtitle">
+          BlogForge is a multi-agent pipeline that researches, writes, optimizes, and publishes your content. Powered by AI.
         </p>
       </section>
 
       {/* Article Grid */}
-      <section className="home-grid-wrap">
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          marginBottom: 24, flexWrap: 'wrap', gap: 12,
-        }}>
-          <h2 style={{
-            fontSize: 13, fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: '0.1em', color: 'var(--ink-muted)', margin: 0,
-          }}>
-            Latest Articles
-          </h2>
-          <Link href="/articles" className="btn btn-ghost" style={{ fontSize: 13 }}>
-            View all →
-          </Link>
+      <section>
+        <div className="section-header">
+          <h2 className="section-title">Latest Articles</h2>
+          {articles.length > 0 && (
+            <Link href="/articles" className="btn btn-ghost btn-sm">
+              View all →
+            </Link>
+          )}
         </div>
 
         {articles.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 80, color: 'var(--ink-muted)' }}>
-            <p style={{ fontSize: 16, fontWeight: 600 }}>No articles yet</p>
-            <p style={{ fontSize: 13, marginTop: 8 }}>Articles will appear here once the pipeline runs.</p>
+          <div style={{ textAlign: 'center', padding: '100px 24px', color: 'var(--ink-muted)' }}>
+            <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No articles yet</p>
+            <p style={{ fontSize: 14 }}>Articles will appear here once the pipeline runs.</p>
           </div>
         ) : (
-          <div className="article-grid">
+          <div className="cards-grid">
             {articles.map((article, idx) => (
               <Link
                 href={`/articles/${article.slug}`}
                 key={article.slug}
-                className="article-card"
-                style={{ animationDelay: `${idx * 0.05}s` }}
+                className="featured-card animate-in"
+                style={{ animationDelay: `${idx * 0.06}s` }}
               >
                 {article.featuredImage ? (
                   <Image
                     src={article.featuredImage}
                     alt={article.title}
                     fill
-                    style={{ objectFit: 'cover' }}
+                    className="featured-card-img"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority={idx < 3}
                   />
                 ) : (
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #1a1d28, #11131a)' }} />
+                  <div
+                    style={{
+                      position: 'absolute', inset: 0,
+                      background: 'linear-gradient(135deg, #1a1d28 0%, #11131a 100%)',
+                    }}
+                  />
                 )}
-                <div className="article-overlay" />
-                <div className="article-text">
-                  <h3 className="article-title">{article.title}</h3>
+                <div className="featured-card-gradient" />
+                <div className="featured-card-body">
+                  {article.category && (
+                    <span className="featured-card-tag">{article.category}</span>
+                  )}
+                  <h3 className="featured-card-title">{article.title}</h3>
                   {article.excerpt && (
-                    <p className="article-excerpt">{article.excerpt}</p>
+                    <p className="featured-card-excerpt">{article.excerpt}</p>
                   )}
                 </div>
               </Link>
