@@ -3,37 +3,39 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
-function isAuthorized(): boolean {
- try {
-  return document.cookie.split('; ').some(c => c.startsWith('blogforge_admin='));
- } catch { return false; }
-}
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
- const router = useRouter();
- const pathname = usePathname();
- const [authorized, setAuthorized] = useState(() => isAuthorized());
- const [checking, setChecking] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [ready, setReady] = useState(false);
+  const [authed, setAuthed] = useState(false);
 
- // Never block the login page itself
- const isLoginPage = pathname === '/admin/login';
+  useEffect(() => {
+    let cancelled = false;
+    async function check() {
+      try {
+        const res = await fetch('/api/admin/check', { cache: 'no-store', credentials: 'same-origin' });
+        if (!cancelled) {
+          setAuthed(res.ok);
+          setReady(true);
+        }
+      } catch {
+        if (!cancelled) setReady(true);
+      }
+    }
+    check();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
- useEffect(() => {
-  if (isLoginPage) {
-   setChecking(false);
-   return;
-  }
-  if (isAuthorized()) {
-   setAuthorized(true);
-   setChecking(false);
-  } else {
-   router.replace('/admin/login');
-  }
- }, [router, isLoginPage]);
+  useEffect(() => {
+    if (!ready) return;
+    if (pathname === '/admin/login') return;
+    if (!authed) router.replace('/admin/login');
+  }, [ready, authed, pathname, router]);
 
- if (isLoginPage) return <>{children}</>;
- if (checking) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0b0f', color: '#6a7388', fontSize: 14 }}>Loading…</div>;
- if (!authorized) return null;
-
- return <>{children}</>;
+  if (pathname === '/admin/login') return <>{children}</>;
+  if (!ready) return null;
+  if (!authed) return null;
+  return <>{children}</>;
 }
