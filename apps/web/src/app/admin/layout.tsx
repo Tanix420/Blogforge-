@@ -10,20 +10,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    async function check() {
-      try {
-        const res = await fetch('/api/admin/check', { cache: 'no-store', credentials: 'same-origin' });
-        if (!cancelled) {
-          setAuthed(res.ok);
-          setReady(true);
-        }
-      } catch {
-        if (!cancelled) setReady(true);
-      }
-    }
-    check();
-    return () => { cancelled = true; };
+    // Check for non-httpOnly auth flag cookie set by login page
+    const hasAuth = document.cookie.split(';').some(c => c.trim().startsWith('blogforge_admin_flag='));
+    setAuthed(hasAuth);
+    setReady(true);
   }, []);
 
   useEffect(() => {

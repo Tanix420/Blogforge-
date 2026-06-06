@@ -24,6 +24,8 @@ export default function LoginClient() {
       if (!res.ok || data.error) {
         setError(data.error || 'Invalid password');
       } else {
+        // Mirror auth state in a client-readable cookie for the admin layout
+        document.cookie = 'blogforge_admin_flag=1; path=/; max-age=' + 60*60*24*7;
         router.push('/admin');
         router.refresh();
       }
