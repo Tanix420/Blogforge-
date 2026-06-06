@@ -23,19 +23,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
     }
     check();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    if (pathname === '/admin/login') return;
+    if (pathname.startsWith('/admin/login')) return;
     if (!authed) router.replace('/admin/login');
   }, [ready, authed, pathname, router]);
 
-  if (pathname === '/admin/login') return <>{children}</>;
-  if (!ready) return null;
-  if (!authed) return null;
+  if (pathname.startsWith('/admin/login')) return <>{children}</>;
+  if (!ready || !authed) return null;
   return <>{children}</>;
 }
