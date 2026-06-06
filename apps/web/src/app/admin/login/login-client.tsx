@@ -36,8 +36,8 @@ export default function LoginClient() {
   };
 
   return (
-    <div className="login-shell">
-      <div className="login-card animate-fade-in-up">
+    <div className="auth-shell">
+      <div className="auth-card animate-fade-in-up">
         <div
           style={{
             width: 40,
@@ -52,23 +52,23 @@ export default function LoginClient() {
         >
           <Shield size={20} color="#fff" />
         </div>
-        <h1 className="login-title">BlogForge Admin</h1>
-        <p className="login-subtitle">Enter your password to access the dashboard.</p>
+        <h1 className="auth-title">BlogForge Admin</h1>
+        <p className="auth-subtitle">Enter your password to access the dashboard.</p>
 
         <form onSubmit={handleSubmit} style={{ marginTop: 24 }}>
-          <label className="login-field-label">Password</label>
+          <label className="auth-label">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter admin password"
-            className="login-input"
+            className="auth-input"
           />
-          {error && <p className="login-error">{error}</p>}
+          {error && <p className="auth-error">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="login-submit"
+            className="auth-submit"
           >
             {loading ? 'Checking…' : 'Sign in'}
           </button>
