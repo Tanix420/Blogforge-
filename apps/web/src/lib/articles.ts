@@ -13,7 +13,17 @@ export function getArticles(): any[] {
  try {
   const raw = fs.readFileSync(INDEX_PATH, 'utf-8');
   const parsed = JSON.parse(raw);
-  return Array.isArray(parsed) ? parsed : (parsed.articles ?? []);
+  if (Array.isArray(parsed)) return parsed;
+  if (parsed && typeof parsed === 'object') {
+   if (Array.isArray((parsed as any).articles)) return (parsed as any).articles;
+   if (Array.isArray((parsed as any).default)) return (parsed as any).default;
+   if (Array.isArray((parsed as any).items)) return (parsed as any).items;
+   // Object with numeric keys {"0": {...}, "1": {...}, ...}
+   if (Object.keys(parsed).length > 0 && Object.keys(parsed).every(k => /^\d+$/.test(k))) {
+    return Object.keys(parsed).sort((a, b) => parseInt(a) - parseInt(b)).map(k => (parsed as any)[k]);
+   }
+  }
+  return [];
  } catch {
   return [];
  }

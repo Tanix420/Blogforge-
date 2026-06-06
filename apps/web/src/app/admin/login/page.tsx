@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
     credentials: 'include',
    });
    const data = await res.json().catch(() => ({}));
-   if (res.ok) {
+   if (res.ok && data.authenticated) {
     window.location.href = '/admin';
    } else {
     setError(data?.error || 'Access denied');
@@ -33,59 +33,45 @@ export default function AdminLoginPage() {
  };
 
  return (
-  <div
-   className="min-h-screen flex items-center justify-center px-4"
-   style={{
-    background:
-     'radial-gradient(circle at 25% 20%, rgba(99,102,241,0.16), transparent 40%), var(--bg-page)',
-   }}
-  >
-   <form onSubmit={submit} className="card p-8 w-full max-w-sm space-y-5">
-    <div className="text-center">
-     <div
-      className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3"
-      style={{
-       background: 'linear-gradient(135deg, var(--accent), var(--accent-muted))',
-       boxShadow: 'var(--shadow-lg)',
-      }}
-     >
-      <Shield className="text-white" size={20} />
+  <div className="login-shell">
+   <form onSubmit={submit} className="login-card">
+    <div style={{ textAlign: 'center' }}>
+     <div style={{
+      width: 48, height: 48,
+      borderRadius: 14,
+      background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 12,
+     }}>
+      <Shield size={22} color="#fff" />
      </div>
-     <h1 className="text-xl font-bold" style={{ color: 'var(--ink-primary)' }}>
-      BlogForge Admin
-     </h1>
-     <p className="text-sm mt-1" style={{ color: 'var(--ink-tertiary)' }}>
-      Sign in to manage your pipeline
-     </p>
+     <h1 className="login-title">BlogForge Admin</h1>
+     <p className="login-subtitle">Sign in to manage your pipeline</p>
     </div>
 
-    {error && (
-     <div
-      className="text-sm text-center py-2 rounded-lg"
-      style={{ background: 'rgba(239,68,68,0.15)', color: '#fca5a5' }}
-     >
-      {error}
-     </div>
-    )}
+    {error && <p className="login-error">{error}</p>}
 
-    <input
-     type="password"
-     value={password}
-     onChange={(e) => setPassword(e.target.value)}
-     placeholder="Admin password"
-     className="input"
-     autoFocus
-    />
+    <div>
+     <label className="login-field-label">Password</label>
+     <input
+      type="password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Enter admin password"
+      className="login-input"
+      autoFocus
+     />
+    </div>
 
-    <button type="submit" disabled={loading} className="btn btn-primary w-full">
+    <button type="submit" disabled={loading} className="login-submit">
      {loading ? 'Signing in…' : 'Sign In'}
     </button>
 
-    <p className="text-xs text-center" style={{ color: 'var(--ink-muted)' }}>
-     <Link href="/" className="inline-flex items-center gap-1 hover:text-[var(--accent-strong)]">
-      <ArrowLeft size={12} /> Back
-     </Link>
-    </p>
+    <Link href="/" className="login-back">
+     <ArrowLeft size={12} /> Back to home
+    </Link>
    </form>
   </div>
  );
