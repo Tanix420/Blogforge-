@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: blogforge
+    env: node
+    buildCommand: cd apps/web && npm install && npm run build
+    startCommand: cd apps/web && npm run start
+    plan: free

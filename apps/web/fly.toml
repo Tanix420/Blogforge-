@@ -1,0 +1,7 @@
+app = "blogforge-web"
+primary_region = "iad"
+[build]
+  [build.image]
+    dockerfile = "Dockerfile"
+[experimental]
+  allowed_public_ports = [80, 443]
