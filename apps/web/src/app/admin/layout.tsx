@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,8 +7,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const cookieStore = await cookies();
   const session = cookieStore.get('blogforge_admin')?.value;
 
+  // Allow the login page itself to render without a session
   if (!session) {
-    redirect('/admin/login');
+    return children as any;
   }
 
   return children as any;
