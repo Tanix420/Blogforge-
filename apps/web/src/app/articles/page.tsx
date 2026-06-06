@@ -1,200 +1,143 @@
-import Link from 'next/link';
 import { Metadata } from 'next';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ChevronRight } from 'lucide-react';
 import { getPublishedArticles } from '@/lib/articles';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: 'Articles – BlogForge AI',
-  description: 'Browse all AI-generated articles on BlogForge AI — research, writing, SEO, AEO, automation, and more.',
-  openGraph: {
-    title: 'Articles – BlogForge AI',
-    description: 'Browse all AI-generated articles on BlogForge AI — research, writing, SEO, AEO, automation, and more.',
-    url: 'https://blogforge.org/articles',
-    siteName: 'BlogForge AI',
-    images: [
-      {
-        url: 'https://images.unsplash.com/photo-1676328179249-b56304e247d3?w=1200&q=80',
-        width: 1200,
-        height: 630,
-      },
-    ],
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Articles – BlogForge AI',
-    description: 'Browse all AI-generated articles on BlogForge AI — research, writing, SEO, AEO, automation, and more.',
-    images: [
-      'https://images.unsplash.com/photo-1676328179249-b56304e247d3?w=1200&q=80',
-    ],
-  },
-  alternates: {
-    canonical: '/articles',
-  },
+  title: 'All Articles — BlogForge AI',
+  description: 'Browse the complete archive of AI-generated articles.',
 };
 
-export default async function ArticlesPage({
- searchParams,
-}: {
- searchParams: Promise<{ cursor?: string; q?: string; category?: string }>;
-}) {
- const sp = await searchParams;
- const q = (sp.q ?? '').toLowerCase();
- const category = (sp.category ?? '').toLowerCase();
- const cursor = sp.cursor ?? '';
- const PAGE = 9;
+export default function ArticlesPage() {
+  const articles = getPublishedArticles();
 
- const all = getPublishedArticles();
- const filtered = all.filter((a: any) => {
-  if (q) {
-   const hay = `${a.title} ${a.excerpt ?? ''} ${(a.tags ?? []).join(' ')}`.toLowerCase();
-   if (!hay.includes(q)) return false;
-  }
-  if (category && !(a.category?.toLowerCase() === category)) return false;
-  return true;
- });
+  return (
+    <div style={{
+      background: 'var(--bg-page)',
+      color: 'var(--ink-primary)',
+      minHeight: '100vh',
+      fontFamily: 'var(--font-brand)',
+    }}>
+      {/* Nav */}
+      <nav className="site-nav">
+        <div className="site-nav-inner">
+          <Link href="/" className="site-nav-brand" style={{ color: 'var(--ink-primary)' }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 10,
+              background: 'linear-gradient(135deg,#6366f1,#4f46e5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontWeight: 900, fontSize: 12, flexShrink: 0,
+            }}>BF</div>
+            <span>BlogForge</span>
+          </Link>
+          <div className="site-nav-links">
+            <Link href="/" style={{ color: 'var(--ink-muted)' }}>Home</Link>
+            <Link href="/admin/login" style={{ color: 'var(--accent)' }}>Admin</Link>
+          </div>
+        </div>
+      </nav>
 
- const startIdx = cursor ? filtered.findIndex((a: any) => a.slug === cursor) + 1 : 0;
- const si = Math.max(startIdx, 0);
- const visible = filtered.slice(si, si + PAGE);
- const total = filtered.length;
+      {/* Header */}
+      <section style={{
+        maxWidth: 900, margin: '0 auto', padding: '80px 20px 40px', textAlign: 'center',
+      }} className="animate-fade-in-up">
+        <h1 style={{
+          fontSize: 36, fontWeight: 800, letterSpacing: '-0.02em',
+          color: 'var(--ink-primary)', margin: '0 0 12px',
+        }}>
+          All Articles
+        </h1>
+        <p style={{
+          fontSize: 16, color: 'var(--ink-tertiary)', lineHeight: 1.6,
+          margin: 0, maxWidth: 560, marginLeft: 'auto', marginRight: 'auto',
+        }}>
+          Explore the full archive of AI-generated content — researched, written, and optimized autonomously.
+        </p>
+      </section>
 
- const prevCursor =
-  si - PAGE >= 0 ? filtered[si - PAGE]?.slug ?? null : null;
- const nextCursor =
-  si + PAGE < total ? filtered[si + PAGE - 1]?.slug ?? null : null;
+      {/* Articles list */}
+      <section style={{ maxWidth: 900, margin: '0 auto', padding: '0 20px 96px' }}>
+        {articles.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 80, color: 'var(--ink-muted)' }}>
+            <p style={{ fontSize: 16, fontWeight: 600 }}>No articles published yet</p>
+            <p style={{ fontSize: 13, marginTop: 8 }}>Check back soon — new content is generated automatically.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {articles.map((article, idx) => (
+              <Link
+                href={`/articles/${article.slug}`}
+                key={article.slug}
+                className="animate-fade-in-up"
+                style={{
+                  display: 'flex', gap: 16, alignItems: 'center',
+                  padding: '16px 20px', borderRadius: 12,
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-default)',
+                  textDecoration: 'none',
+                  animationDelay: `${idx * 0.04}s`,
+                  transition: 'border-color 0.2s, background 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-hover)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-default)';
+                  e.currentTarget.style.background = 'var(--bg-elevated)';
+                }}
+              >
+                {article.featuredImage ? (
+                  <div style={{
+                    width: 72, height: 72, borderRadius: 8, overflow: 'hidden', flexShrink: 0,
+                    background: 'var(--bg-surface)', position: 'relative',
+                  }}>
+                    <Image src={article.featuredImage} alt={article.title} fill style={{ objectFit: 'cover' }} />
+                  </div>
+                ) : (
+                  <div style={{
+                    width: 72, height: 72, borderRadius: 8, flexShrink: 0,
+                    background: 'linear-gradient(135deg, #1a1d28, #11131a)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 11, color: 'var(--ink-muted)', fontWeight: 700,
+                  }}>NO IMG</div>
+                )}
 
- const showingFirst = si + 1;
- const showingLast = Math.min(si + PAGE, total);
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{
+                    fontSize: 15, fontWeight: 700, color: 'var(--ink-primary)',
+                    letterSpacing: '-0.01em', marginBottom: 4,
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  }}>
+                    {article.title}
+                  </div>
+                  {article.excerpt && (
+                    <div style={{
+                      fontSize: 13, color: 'var(--ink-tertiary)', lineHeight: 1.5,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {article.excerpt}
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', gap: 10, marginTop: 6, fontSize: 11, color: 'var(--ink-muted)', fontWeight: 500 }}>
+                    {article.category && <span style={{ color: '#949cf7' }}>{article.category}</span>}
+                    {article.readingTime && <span>{article.readingTime} min</span>}
+                    {article.publishedAt && (
+                      <span>{new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                    )}
+                  </div>
+                </div>
 
- const categories = Array.from(
-  new Set(all.map((a: any) => a.category).filter(Boolean))
- );
-
- return (
-  <div className="min-h-screen" style={{ background: 'var(--bg-page)' }}>
-   <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-     <div>
-      <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: 'var(--ink-primary)' }}>
-       Articles
-      </h1>
-      <p className="text-sm mt-1" style={{ color: 'var(--ink-tertiary)' }}>
-       {total} {total === 1 ? 'article' : 'articles'} found
-      </p>
-     </div>
-     <Link href="/" className="text-xs inline-flex items-center gap-1" style={{ color: 'var(--ink-muted)' }}>
-      <ChevronLeft size={14} /> Back to home
-     </Link>
+                <ChevronRight size={16} style={{ color: 'var(--ink-muted)', flexShrink: 0 }} />
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
-
-    {total === 0 ? (
-     <div className="text-center py-20">
-      <div className="text-5xl mb-4">🔍</div>
-      <h3 className="text-xl font-semibold" style={{ color: 'var(--ink-tertiary)' }}>No articles found</h3>
-      <p className="text-sm mb-6" style={{ color: 'var(--ink-muted)' }}>Try adjusting your search or filter.</p>
-      <Link href="/articles" className="btn btn-primary">View all articles</Link>
-     </div>
-    ) : (
-     <>
-      <p className="text-xs mb-4" style={{ color: 'var(--ink-muted)' }}>
-       Showing {showingFirst}–{showingLast} of {total}
-      </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-       {visible.map((article: any) => (
-        <Link
-         href={`/articles/${article.slug}`}
-         key={article.slug}
-         className="surface surface-interactive group block"
-        >
-         {article.featuredImage && (
-          <div className="aspect-video overflow-hidden">
-           <img
-            src={article.featuredImage}
-            alt={article.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-           />
-          </div>
-         )}
-         <div className="p-5">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-           {article.category && <span className="badge">{article.category}</span>}
-           <span className="text-[11px]" style={{ color: 'var(--ink-muted)' }}>
-            {article.readingTime ?? '?'} min
-           </span>
-          </div>
-          <h3 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-[var(--accent-strong)] transition-colors" style={{ color: 'var(--ink-primary)' }}>
-           {article.title}
-          </h3>
-          {article.excerpt && (
-           <p className="text-sm line-clamp-2 mb-4" style={{ color: 'var(--ink-tertiary)' }}>
-            {article.excerpt}
-           </p>
-          )}
-          <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--ink-muted)' }}>
-           <span className="inline-flex items-center gap-1.5 font-mono" style={{ color: 'var(--accent-strong)' }}>
-            SEO {article.seoScore ?? 0}/100
-           </span>
-          </div>
-         </div>
-        </Link>
-       ))}
-      </div>
-
-      {total > PAGE && (
-       <div className="mt-12 flex items-center justify-between">
-        <div className="flex gap-3">
-         {prevCursor ? (
-          <Link
-           href={`/articles?cursor=${encodeURIComponent(prevCursor)}${q ? `&q=${encodeURIComponent(q)}` : ''}${category ? `&category=${encodeURIComponent(category)}` : ''}`}
-           className="btn btn-ghost"
-          >
-           <ChevronLeft size={16} /> Previous
-          </Link>
-         ) : (
-          <span />
-         )}
-         {nextCursor ? (
-          <Link
-           href={`/articles?cursor=${encodeURIComponent(nextCursor)}${q ? `&q=${encodeURIComponent(q)}` : ''}${category ? `&category=${encodeURIComponent(category)}` : ''}`}
-           className="btn btn-primary"
-          >
-           Next <ChevronRight size={16} />
-          </Link>
-         ) : (
-          <span />
-         )}
-        </div>
-       </div>
-      )}
-
-      {categories.length > 0 && (
-       <div className="mt-12 pt-8 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-        <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--ink-primary)' }}>
-         Browse by Category
-        </h2>
-        <div className="flex flex-wrap gap-2">
-         {categories.map((c: string) => (
-          <Link
-           key={c}
-           href={category?.toLowerCase() === c.toLowerCase() ? '/articles' : `/articles?category=${encodeURIComponent(c)}`}
-           className="btn text-xs"
-           style={{
-            background: category?.toLowerCase() === c.toLowerCase() ? 'var(--accent-subtle)' : 'var(--bg-input)',
-            color: category?.toLowerCase() === c.toLowerCase() ? 'var(--accent-strong)' : 'var(--ink-secondary)',
-            border: '1px solid var(--border-default)',
-           }}
-          >
-           {c}
-          </Link>
-         ))}
-        </div>
-       </div>
-      )}
-     </>
-    )}
-   </div>
-  </div>
- );
+  );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Shield } from 'lucide-react';
 
 export default function LoginClient() {
   const router = useRouter();
@@ -24,8 +25,6 @@ export default function LoginClient() {
       if (!res.ok || data.error) {
         setError(data.error || 'Invalid password');
       } else {
-        // Mirror auth state in a client-readable cookie for the admin layout
-        document.cookie = 'blogforge_admin_flag=1; path=/; max-age=' + 60*60*24*7;
         router.push('/admin');
         router.refresh();
       }
@@ -37,28 +36,8 @@ export default function LoginClient() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#0a0b0f',
-        fontFamily: "'Geist', 'Inter', system-ui, sans-serif",
-        padding: 20,
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: 400,
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 14,
-          padding: '32px 28px',
-          boxShadow: 'rgba(0,0,0,0.3) 0 8px 32px',
-        }}
-      >
+    <div className="login-shell">
+      <div className="login-card animate-fade-in-up">
         <div
           style={{
             width: 40,
@@ -68,81 +47,28 @@ export default function LoginClient() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#fff',
-            fontWeight: 900,
-            fontSize: 14,
             marginBottom: 20,
           }}
         >
-          BF
+          <Shield size={20} color="#fff" />
         </div>
-        <h1
-          style={{
-            fontSize: 20,
-            fontWeight: 800,
-            color: '#f1f3f8',
-            letterSpacing: '-0.02em',
-            marginBottom: 6,
-            marginTop: 0,
-          }}
-        >
-          BlogForge Admin
-        </h1>
-        <p
-          style={{
-            fontSize: 13,
-            color: '#6a7388',
-            marginBottom: 24,
-            marginTop: 0,
-          }}
-        >
-          Enter your admin password to access the dashboard.
-        </p>
-        <form onSubmit={handleSubmit}>
+        <h1 className="login-title">BlogForge Admin</h1>
+        <p className="login-subtitle">Enter your password to access the dashboard.</p>
+
+        <form onSubmit={handleSubmit} style={{ marginTop: 24 }}>
+          <label className="login-field-label">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 6,
-              color: '#f1f3f8',
-              fontSize: 14,
-              outline: 'none',
-              marginBottom: 8,
-              boxSizing: 'border-box',
-            }}
+            placeholder="Enter admin password"
+            className="login-input"
           />
-          {error && (
-            <div
-              style={{
-                color: '#f87171',
-                fontSize: 12,
-                marginBottom: 10,
-              }}
-            >
-              {error}
-            </div>
-          )}
+          {error && <p className="login-error">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '10px 16px',
-              background: loading ? 'rgba(99,102,241,0.5)' : '#6366f1',
-              border: 'none',
-              borderRadius: 6,
-              color: '#fff',
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-            }}
+            className="login-submit"
           >
             {loading ? 'Checking…' : 'Sign in'}
           </button>
