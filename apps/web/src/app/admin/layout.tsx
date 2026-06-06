@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 function isAuthorized(): boolean {
  try {
@@ -11,29 +11,28 @@ function isAuthorized(): boolean {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
  const router = useRouter();
- const [authorized, setAuthorized] = useState(false);
+ const pathname = usePathname();
+ const [authorized, setAuthorized] = useState(() => isAuthorized());
  const [checking, setChecking] = useState(true);
 
+ // Never block the login page itself
+ const isLoginPage = pathname === '/admin/login';
+
  useEffect(() => {
-  const check = () => {
-   if (isAuthorized()) {
-    setAuthorized(true);
-   } else {
-    router.replace('/admin/login');
-   }
+  if (isLoginPage) {
    setChecking(false);
-  };
-  check();
- }, [router]);
+   return;
+  }
+  if (isAuthorized()) {
+   setAuthorized(true);
+   setChecking(false);
+  } else {
+   router.replace('/admin/login');
+  }
+ }, [router, isLoginPage]);
 
- if (checking) {
-  return (
-   <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0b0f' }}>
-    <div className="text-sm" style={{ color: '#6a7388' }}>Loading...</div>
-   </div>
-  );
- }
-
+ if (isLoginPage) return <>{children}</>;
+ if (checking) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0b0f', color: '#6a7388', fontSize: 14 }}>Loading…</div>;
  if (!authorized) return null;
 
  return <>{children}</>;
