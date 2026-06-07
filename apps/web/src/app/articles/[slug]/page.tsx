@@ -92,13 +92,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <div style={{ background: 'var(--page-bg)', color: 'var(--ink-primary)', minHeight: '100vh', fontFamily: 'var(--font)' }}>
-      {/* Navigation */}
-      <nav className="nav">
-        <div className="nav-inner">
-          <Link href="/" style={{ color: 'var(--ink-primary)', fontWeight: 800, fontSize: 15, letterSpacing: '-.02em', textDecoration: 'none' }}>
-            BlogForge
-          </Link>
-          <div className="nav-links">
+    {/* Navigation */}
+    <nav className="nav">
+    <div className="nav-inner">
+    <Link href="/" className="nav-brand">
+    <div className="nav-brand-mark">BF</div>
+    <span>BlogForge</span>
+    </Link>
+    <div className="nav-links">
             <Link href="/articles" className="nav-link">Articles</Link>
             <Link href="/" className="nav-link">Home</Link>
           </div>

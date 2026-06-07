@@ -17,15 +17,15 @@ export default function ArticlesPage() {
 
   return (
     <div style={{
-      background: 'var(--bg-page)',
+      background: 'var(--page-bg)',
       color: 'var(--ink-primary)',
       minHeight: '100vh',
-      fontFamily: 'var(--font-brand)',
+      fontFamily: 'var(--font)',
     }}>
       {/* Nav */}
       <nav className="site-nav">
         <div className="site-nav-inner">
-          <Link href="/" className="site-nav-brand" style={{ color: 'var(--ink-primary)' }}>
+          <Link href="/" className="nav-brand" style={{ color: 'var(--ink-primary)' }}>
             <div style={{
               width: 32, height: 32, borderRadius: 10,
               background: 'linear-gradient(135deg,#6366f1,#4f46e5)',
@@ -34,7 +34,7 @@ export default function ArticlesPage() {
             }}>BF</div>
             <span>BlogForge</span>
           </Link>
-          <div className="site-nav-links">
+          <div className="nav-links">
             <Link href="/" style={{ color: 'var(--ink-muted)' }}>Home</Link>
             <Link href="/admin/login" style={{ color: 'var(--accent)' }}>Admin</Link>
           </div>
@@ -76,8 +76,8 @@ export default function ArticlesPage() {
                 style={{
                   display: 'flex', gap: 16, alignItems: 'center',
                   padding: '16px 20px', borderRadius: 12,
-                  background: 'var(--bg-elevated)',
-                  border: '1px solid var(--border-default)',
+                  background: 'var(--elevated-bg)',
+                  border: '1px solid var(--border-strong)',
                   textDecoration: 'none',
                   animationDelay: `${idx * 0.04}s`,
                   transition: 'border-color 0.2s, background 0.2s',
@@ -87,8 +87,8 @@ export default function ArticlesPage() {
                   e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border-default)';
-                  e.currentTarget.style.background = 'var(--bg-elevated)';
+                  e.currentTarget.style.borderColor = 'var(--border-strong)';
+                  e.currentTarget.style.background = 'var(--elevated-bg)';
                 }}
               >
                 {article.featuredImage ? (
