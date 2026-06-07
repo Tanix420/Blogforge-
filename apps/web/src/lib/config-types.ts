@@ -162,7 +162,7 @@ export const AFFILIATE_PROGRAMS = [
 ];
 
 // ─── Config file storage ───
-const CONFIG_DIR = path.join(process.cwd(), "content", "config");
+const CONFIG_DIR = path.join("/tmp", "blogforge-data", "content", "config");
 const CONFIG_PATH = path.join(CONFIG_DIR, "config.json");
 
 export async function loadConfig(): Promise<BlogConfig> {

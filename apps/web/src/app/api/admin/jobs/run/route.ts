@@ -13,22 +13,22 @@ async function requireAuth(): Promise<boolean> {
 export async function POST(req: NextRequest) {
   if (!(await requireAuth())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
-   const body = await req.json().catch(() => ({}));
-   const config = await loadConfig();
-   const result = await runFullPipeline(config, {
-    forceTopic: body.topic || null,
-    maxArticles: body.count || 1,
-   });
-   return NextResponse.json({
-    ok: true,
-    jobId: result.jobId,
-    status: result.status,
-    article: result.article,
-    qualityScore: result.qualityScore,
-    logs: result.logs,
-   });
+    const body = await req.json().catch(() => ({}));
+    const config = await loadConfig();
+    const result = await runFullPipeline(config, {
+      forceTopic: (body.topic as string | undefined) || null,
+      maxArticles: typeof body.count === 'number' ? body.count : 1,
+    });
+    return NextResponse.json({
+      ok: true,
+      jobId: result.jobId,
+      status: result.status,
+      article: result.article,
+      qualityScore: result.qualityScore,
+      logs: result.logs,
+    });
   } catch (err: any) {
-   console.error("Pipeline error:", err);
-   return NextResponse.json({ ok: false, error: err.message || "Pipeline failed" }, { status: 500 });
+    console.error("Pipeline error:", err);
+    return NextResponse.json({ ok: false, error: err.message || "Pipeline failed" }, { status: 500 });
   }
 }

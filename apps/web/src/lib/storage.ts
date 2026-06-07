@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const DATA_DIR = path.join(process.cwd(), 'content', 'articles');
+const DATA_DIR = path.join('/tmp', 'blogforge-data', 'content', 'articles');
 const INDEX_PATH = path.join(DATA_DIR, 'index.json');
 
 function ensureDir(): void {
