@@ -98,13 +98,13 @@ export default function AdminPage() {
       </div>
 
       {status === 'error' && (
-        <div className="card" style={{ padding: 16, color: 'var(--danger)', marginBottom: 20, fontSize: 14 }}>
+        <div className="stat-card" style={{ padding: 16, color: 'rgba(239,68,68,1)', marginBottom: 20, fontSize: 14 }}>
           Failed to load admin data. <button onClick={loadData} style={{ textDecoration: 'underline', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', font: 'inherit' }}>Retry</button>
         </div>
       )}
 
       {status === 'loading' && (
-        <div className="card" style={{ padding: 20, marginBottom: 20 }}>
+        <div className="stat-card" style={{ padding: 20, marginBottom: 20 }}>
           <div className="skeleton" style={{ height: 16, width: 120, marginBottom: 12 }} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
             {[0,1,2,3,4,5].map(i => (
@@ -139,9 +139,9 @@ export default function AdminPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16, marginBottom: 24 }}>
             {/* Agent Status */}
-            <div className="card" style={{ padding: 20 }}>
+            <div className="stat-card" style={{ padding: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                <Play size={18} style={{ color: 'var(--accent-strong)' }} />
+                <Play size={18} style={{ color: 'var(--accent-hover)' }} />
                 <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-primary)', margin: 0 }}>Agent Status</h2>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -158,9 +158,9 @@ export default function AdminPage() {
                         {agent.lastRun ? `${agent.lastRun}${typeof agent.calls !== 'undefined' ? ` · ${agent.calls} calls` : ''}` : 'Not run yet'}
                       </div>
                     </div>
-                    <span className="badge" style={{
-                      background: agent.status === 'running' ? 'var(--warn)' : 'var(--accent-subtle)',
-                      color: agent.status === 'running' ? '#000' : 'var(--accent-strong)',
+                    <span className="stat-label" style={{
+                      background: agent.status === 'running' ? 'rgba(251,191,36,1)' : 'rgba(101,109,255,0.15)',
+                      color: agent.status === 'running' ? '#000' : 'var(--accent-hover)',
                       marginLeft: 12,
                     }}>{agent.status}</span>
                   </div>
@@ -169,9 +169,9 @@ export default function AdminPage() {
             </div>
 
             {/* Recent Logs */}
-            <div className="card" style={{ padding: 20 }}>
+            <div className="stat-card" style={{ padding: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                <Workflow size={18} style={{ color: 'var(--accent-strong)' }} />
+                <Workflow size={18} style={{ color: 'var(--accent-hover)' }} />
                 <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-primary)', margin: 0 }}>Recent Logs</h2>
               </div>
               <div style={{ maxHeight: 260, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -191,8 +191,8 @@ export default function AdminPage() {
                       {new Date(log.ts ?? Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     <div style={{ minWidth: 0 }}>
-                      <span className="badge" style={{ marginRight: 6, fontSize: 11 }}>{log.agent ?? 'system'}</span>
-                      <span style={{ color: 'var(--ink-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block', maxWidth: 200, verticalAlign: 'middle' }}>
+                      <span className="stat-label" style={{ marginRight: 6, fontSize: 11 }}>{log.agent ?? 'system'}</span>
+                      <span style={{ color: 'var(--ink-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block', maxWidth: 200, verticalAlign: 'middle' }}>
                         {log.msg ?? log.message ?? ''}
                       </span>
                     </div>
@@ -203,11 +203,11 @@ export default function AdminPage() {
           </div>
 
           {/* Content Queue */}
-          <div className="card" style={{ padding: 20 }}>
+          <div className="stat-card" style={{ padding: 20 }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                  <FileText size={18} style={{ color: 'var(--accent-strong)' }} />
+                  <FileText size={18} style={{ color: 'var(--accent-hover)' }} />
                   <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-primary)', margin: 0 }}>Content Queue</h2>
                 </div>
                 <p style={{ fontSize: 12, color: 'var(--ink-muted)', margin: 0 }}>
@@ -219,13 +219,13 @@ export default function AdminPage() {
                   value={form.topic}
                   onChange={(e) => setForm({ ...form, topic: e.target.value })}
                   placeholder="New topic title"
-                  className="input"
+                  className="auth-input"
                   style={{ width: 240 }}
                 />
                 <select
                   value={form.niche}
                   onChange={(e) => setForm({ ...form, niche: e.target.value })}
-                  className="input"
+                  className="auth-input"
                   style={{ width: 160 }}
                 >
                   <option>Technology</option>
@@ -255,9 +255,9 @@ export default function AdminPage() {
                     <div style={{
                       marginTop: 5, width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
                       background:
-                        job.status === 'running' ? 'var(--warn)' :
-                        job.status === 'done' ? 'var(--success)' :
-                        'var(--accent-strong)',
+                        job.status === 'running' ? 'rgba(251,191,36,1)' :
+                        job.status === 'done' ? 'rgba(16,185,129,1)' :
+                        'var(--accent-hover)',
                       boxShadow: job.status === 'running' ? '0 0 12px rgba(251,191,36,0.4)' : 'none',
                     }} />
                     <div style={{ minWidth: 0 }}>
@@ -269,15 +269,15 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </div>
-                  <span className="badge" style={{
+                  <span className="stat-label" style={{
                     background:
-                      job.status === 'running' ? 'var(--warn)' :
-                      job.status === 'done' ? 'var(--success)' :
-                      'var(--accent-subtle)',
+                      job.status === 'running' ? 'rgba(251,191,36,1)' :
+                      job.status === 'done' ? 'rgba(16,185,129,1)' :
+                      'rgba(101,109,255,0.15)',
                     color:
                       job.status === 'running' ? '#000' :
                       job.status === 'done' ? '#000' :
-                      'var(--accent-strong)',
+                      'var(--accent-hover)',
                     flexShrink: 0,
                   }}>
                     {job.status ?? 'queued'}
@@ -290,9 +290,9 @@ export default function AdminPage() {
       )}
 
       {toast && (
-        <div className="card" style={{
+        <div className="stat-card" style={{
           position: 'fixed', bottom: 20, right: 20, padding: '12px 16px',
-          fontSize: 13, background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
+          fontSize: 13, background: 'var(--elevated-bg)', border: '1px solid var(--border)',
           zIndex: 50,
         }}>
           {toast}
