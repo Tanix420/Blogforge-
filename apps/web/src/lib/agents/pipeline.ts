@@ -148,7 +148,7 @@ export async function runFullPipeline(config: any, opts = {} as { forceTopic?: s
         const res = await searchDDG([query], 8);
         const r = res[0];
         if (!r || r.results.length === 0) return 'No results.';
-        return r.results.map((x) => `- ${x.title}: ${x.snippet}`).join('\n');
+        return r.results.map((x) => `- ${x.title}: ${(x as any).snippet ?? x.title}`).join('\n');
       }
     );
     toolLoop.register(
@@ -173,7 +173,7 @@ export async function runFullPipeline(config: any, opts = {} as { forceTopic?: s
 
     log('TrendingEngine', 'trending', 'Fetching trending topics...');
     const topics = await fetchTrendingTopics(niche);
-    log('TrendingEngine', 'trending', `Found ${topics.length} topics`, topics.length > 0);
+    log('TrendingEngine', 'trending', `Found ${topics.length} topics`);
     if (topics.length === 0) return { jobId, status: 'failed', logs };
 
     const topic = topics[0];
@@ -184,11 +184,11 @@ export async function runFullPipeline(config: any, opts = {} as { forceTopic?: s
       'You are a research assistant. Use the web_search tool to find real sources, then synthesize findings.'
     );
     const researchNotes = researchResult.response || `Research context for ${topic.title} in ${niche}.`;
-    log('Researcher', 'research', 'Research complete', true);
+    log('Researcher', 'research', 'Research complete');
 
     log('Writer', 'writing', 'Writing article...');
-    const styleGuide = buildStyleGuide(providerConfig, topic);
-    const writerPrompt = buildWriterPrompt(topic, researchNotes, providerConfig);
+    const styleGuide = buildStyleGuide(providerConfig);
+    const writerPrompt = buildWriterPrompt(topic, providerConfig);
     const writeResult = await toolLoop.run(
       `Write an article about: ${topic.title}. Use the write_article tool with the following notes:\n\n${researchNotes.slice(0, 4000)}\n\nRequirements: 1800-2400 words, engaging tone, include headings and lists.`,
       client,
@@ -197,30 +197,30 @@ export async function runFullPipeline(config: any, opts = {} as { forceTopic?: s
     const writerOutput = writeResult.response || `# ${topic.title}\n\nUnable to generate content right now.`;
     const draft = parseWriterOutput(writerOutput, topic, providerConfig);
     draft.wordCount = writerOutput.split(/\s+/).length;
-    log('Writer', 'writing', `Draft ready — ${draft.wordCount} words`, true);
+    log('Writer', 'writing', `Draft ready — ${draft.wordCount} words`);
 
     log('SEOAgent', 'seo', 'Analyzing SEO + AEO...');
-    const seoScore = computeSEOHeuristics(draft.title, draft.content, draft.metaDescription);
+    const seoScore = computeSEOHeuristics(draft);
     draft.seoScore = seoScore;
     draft.readingTime = Math.max(1, Math.round(draft.wordCount / 220));
     log('SEOAgent', 'seo', `SEO score: ${seoScore}/100`, true);
 
     if (providerConfig.affiliateEnabled && providerConfig.affiliateId) {
-      log('AffiliateAgent', 'affiliate', 'Inserting affiliate links...');
-      draft.content = insertAffiliateLinks(draft.content, providerConfig.affiliateProgram, providerConfig.affiliateId, niche);
-      draft.affiliateLinks = [];
-      log('AffiliateAgent', 'affiliate', 'Affiliate links inserted', true);
+      log('AffiliateAgent', 'affiliate', 'Inserting affiliate links');
+      draft.content = insertAffiliateLinks(draft.content, providerConfig.affiliateProgram, providerConfig.affiliateId);
+      
+      log('AffiliateAgent', 'affiliate', 'Affiliate links inserted');
     }
 
     log('QualityGate', 'quality', 'Running quality analysis...');
-    const qualityScore = computeQualityHeuristics(draft.content);
+    const qualityScore = computeQualityHeuristics(draft);
     draft.qualityScore = qualityScore;
     const recommendation = qualityScore >= 80 ? 'publish' : qualityScore >= 65 ? 'review' : 'regenerate';
-    log('QualityGate', 'quality', `Quality: ${qualityScore}/100 → ${recommendation}`, qualityScore >= 65);
+    
 
     log('ImageAgent', 'image', 'Generating featured image...');
-    draft.featuredImage = generateImage(draft.title, draft.slug);
-    log('ImageAgent', 'image', 'Image ready', true);
+    draft.featuredImage = generateImage(draft.title);
+    log('ImageAgent', 'image', 'Image ready');
 
     const now = new Date().toISOString();
     const finalStatus = recommendation === 'publish' && providerConfig.publishMode === 'auto' ? 'published' : 'review';
