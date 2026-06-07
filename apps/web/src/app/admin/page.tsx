@@ -18,10 +18,11 @@ import {
 type Status = 'idle' | 'loading' | 'error';
 
 interface DashboardData {
-  stats: any;
-  logs: any[];
-  agents: any[];
-  queue: any[];
+ stats: { total?: number; published?: number; drafts?: number; avgSeo?: number };
+ logs: any[];
+ recentLogs?: any[];
+ agents: any[];
+ queue: any[];
 }
 
 export default function AdminPage() {
@@ -123,9 +124,9 @@ export default function AdminPage() {
             gap: 12, marginBottom: 24,
           }}>
             {[
-              { label: 'Total', value: data?.stats?.totalArticles ?? 0 },
-              { label: 'Published', value: data?.stats?.publishedArticles ?? 0 },
-              { label: 'Drafts', value: data?.stats?.draftArticles ?? 0 },
+              { label: 'Total', value: data?.stats?.total ?? 0 },
+              { label: 'Published', value: data?.stats?.published ?? 0 },
+              { label: 'Drafts', value: data?.stats?.drafts ?? 0 },
               { label: 'Queue', value: (data?.queue ?? []).length },
               { label: 'Agents', value: (data?.agents ?? []).length },
               { label: 'Avg SEO', value: `${data?.stats?.avgSeo ?? 0}%` },
@@ -155,7 +156,7 @@ export default function AdminPage() {
                         {agent.name}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 2 }}>
-                        {agent.lastRun ? `${agent.lastRun}${typeof agent.calls !== 'undefined' ? ` · ${agent.calls} calls` : ''}` : 'Not run yet'}
+                        {agent.last ? `${agent.last}${typeof agent.calls !== 'undefined' ? ` · ${agent.calls} calls` : ''}` : 'Not run yet'}
                       </div>
                     </div>
                     <span className="stat-label" style={{
@@ -175,10 +176,10 @@ export default function AdminPage() {
                 <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-primary)', margin: 0 }}>Recent Logs</h2>
               </div>
               <div style={{ maxHeight: 260, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {(data.logs ?? []).length === 0 && (
-                  <div style={{ fontSize: 12, color: 'var(--ink-muted)' }}>No recent logs.</div>
+                {(data.recentLogs ?? data.logs ?? []).length === 0 && (
+                <div style={{ fontSize: 12, color: 'var(--ink-muted)' }}>No recent logs.</div>
                 )}
-                {(data.logs ?? []).map((log: any, i: number) => (
+                {(data.recentLogs ?? data.logs ?? []).map((log: any, i: number) => (
                   <div key={i} style={{
                     display: 'flex', gap: 10, padding: '8px 0',
                     borderBottom: i < (data.logs ?? []).length - 1 ? '1px solid var(--border-subtle)' : 'none',

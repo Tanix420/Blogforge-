@@ -17,8 +17,8 @@ export function middleware(request: NextRequest) {
  return NextResponse.next();
  }
 
- // Allow API auth endpoints (not protected by cookie)
- if (url.pathname.startsWith('/api/admin/auth') || url.pathname.startsWith('/api/admin/check')) {
+ // Allow all /api/admin/* endpoints (auth, check, dashboard, jobs, etc.)
+ if (url.pathname.startsWith('/api/admin/')) {
  return NextResponse.next();
  }
 
