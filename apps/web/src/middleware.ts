@@ -5,30 +5,30 @@ import type { NextRequest } from 'next/server';
 const COOKIE = 'blogforge_admin';
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl;
+ const url = request.nextUrl;
 
-  // Allow public routes
-  if (!url.pathname.startsWith('/admin')) {
-    return NextResponse.next();
-  }
+ // Allow public routes
+ if (!url.pathname.startsWith('/admin')) {
+ return NextResponse.next();
+ }
 
-  // Allow login page
-  if (url.pathname === '/admin/login') {
-    return NextResponse.next();
-  }
+ // Allow login page
+ if (url.pathname === '/admin/login') {
+ return NextResponse.next();
+ }
 
-  // Allow auth API
-  if (url.pathname.startsWith('/api/admin/auth')) {
-    return NextResponse.next();
-  }
+ // Allow API auth endpoints (not protected by cookie)
+ if (url.pathname.startsWith('/api/admin/auth') || url.pathname.startsWith('/api/admin/check')) {
+ return NextResponse.next();
+ }
 
-  // Check httpOnly cookie server-side
-  const session = request.cookies.get(COOKIE)?.value || '';
-  if (!session) {
-    return NextResponse.redirect(new URL('/admin/login', url));
-  }
+ // Check httpOnly cookie server-side
+ const session = request.cookies.get(COOKIE)?.value || '';
+ if (!session) {
+ return NextResponse.redirect(new URL('/admin/login', url));
+ }
 
-  return NextResponse.next();
+ return NextResponse.next();
 }
 
 export const config = {
